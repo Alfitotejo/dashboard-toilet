@@ -45,6 +45,7 @@
 </head>
 <body class="min-h-screen p-4 md:p-8">
     <div class="max-w-6xl mx-auto">
+
         <!-- Header -->
         <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
@@ -63,9 +64,40 @@
             </div>
         </header>
 
+        <div class="glass-card p-6 rounded-3xl shadow-sm mb-8">
+            <h2 class="text-lg font-semibold text-slate-700 mb-4 flex items-center gap-2">
+                <i class="fa-solid fa-camera"></i> Foto Alat Monitoring
+            </h2>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                
+                <!-- Gambar -->
+                <div class="w-full">
+                    <img 
+                        src="assets/ireland2.jpg" 
+                        alt="Alat Monitoring Toilet" 
+                        class="w-full h-auto rounded-2xl shadow-md border"
+                    >
+                </div>
+
+                <!-- Keterangan -->
+                <div class="text-slate-600 text-sm leading-relaxed">
+                    <p class="font-semibold text-slate-700">Device ID: LANTAI-1</p>
+                    <p class="mt-2">
+                        Sistem ini memonitor parameter kualitas udara toilet secara real-time 
+                        menggunakan sensor CO2, NH3, H2S, TVOC, PM2.5, suhu, dan kelembapan.
+                    </p>
+                    <p class="mt-2 text-xs text-slate-400">
+                        Tugas Akhir: Alfito Wahyu Ramandhan.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
         <!-- Main Dashboard Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            
+
             <!-- Suhu -->
             <div class="glass-card p-6 rounded-3xl shadow-sm">
                 <div class="flex justify-between items-start mb-4">
@@ -122,7 +154,7 @@
                 </div>
             </div>
 
-            <!-- NH3 (Ammonia) - Khas Toilet -->
+            <!-- NH3 -->
             <div class="glass-card p-6 rounded-3xl shadow-sm lg:col-span-2">
                 <div class="flex justify-between items-center mb-4">
                     <div class="flex items-center gap-3">
@@ -172,16 +204,17 @@
 
         </div>
 
-        <!-- Info Section -->
+        <!-- Footer -->
         <footer class="mt-12 text-center text-slate-400 text-sm">
             <p>&copy; 2026 Facility Management System • Update otomatis setiap 120 detik</p>
         </footer>
+
     </div>
 
+    <!-- SCRIPT TIDAK DIUBAH -->
     <script>
-        // MASUKKAN API URL ANDA DI SINI
         const API_URL = 'https://fitormdn.pythonanywhere.com/get?device=LANTAI-1';
-        const UPDATE_INTERVAL = 1 * 60 * 1000; // 2 Menit dalam milidetik
+        const UPDATE_INTERVAL = 2 * 60 * 1000;
 
         async function fetchData() {
             const indicator = document.getElementById('status-indicator');
@@ -195,15 +228,12 @@
                 if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
                 let data = await response.json();
-                console.log("Raw data:", data);
 
                 if (Array.isArray(data)) {
                     data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-
                     data = data[0];
                 }
 
-                console.log("Latest data:", data);
                 updateUI(data);
 
                 indicator.className = 'status-dot bg-emerald-500';
@@ -212,14 +242,12 @@
                     `Data terakhir: ${data.created_at || new Date().toLocaleString()}`;
 
             } catch (error) {
-                console.error('Gagal mengambil data API:', error);
                 indicator.className = 'status-dot bg-rose-500';
                 statusText.innerText = 'Error API';
             }
         }
 
         function updateUI(data) {
-            // Mapping ID element ke key JSON yang ada di API Anda
             const mappings = {
                 'val-CO2': data.CO2,
                 'val-H2S': data.H2S,
@@ -232,15 +260,11 @@
 
             for (const [id, value] of Object.entries(mappings)) {
                 const el = document.getElementById(id);
-                if (el) {
-                    // Pastikan nilai adalah angka atau string yang valid
-                    el.innerText = (value !== undefined && value !== null) ? value : '--';
-                }
+                if (el) el.innerText = (value ?? '--');
             }
 
-            // Logika indikator Ammonia (NH3)
             const nh3Badge = document.getElementById('badge-NH3');
-            if (data.NH3 !== undefined && data.NH3 !== null) {
+            if (data.NH3 != null) {
                 nh3Badge.classList.remove('hidden');
                 const valNH3 = parseFloat(data.NH3);
                 if (valNH3 > 10) {
@@ -253,11 +277,9 @@
             }
         }
 
-        // Jalankan saat load pertama kali
         fetchData();
-
-        // Set interval untuk update setiap 2 menit
         setInterval(fetchData, UPDATE_INTERVAL);
     </script>
+
 </body>
 </html>
