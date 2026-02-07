@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monitor Kualitas Udara Toilet</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        .status-dot {
+            height: 10px;
+            width: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 tracking-tight">Toilet Monitoring System</h1>
+                <p class="text-slate-500 mt-1 flex items-center gap-2">
+                    <i class="fa-solid fa-location-dot"></i> 
+                    Lantai 1 - Gedung Utama
+                </p>
+            </div>
+            <div class="flex flex-col items-end">
+                <div class="flex items-center gap-3 px-4 py-2 bg-white rounded-full shadow-sm border border-slate-100">
+                    <span id="status-text" class="text-sm font-medium text-slate-600">Sinkronisasi...</span>
+                    <span id="status-indicator" class="status-dot bg-amber-400 animate-pulse-slow"></span>
+                </div>
+                <p id="last-updated" class="text-xs text-slate-400 mt-2 italic">Menunggu data pertama...</p>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            
+            <!-- Suhu -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-blue-50 text-blue-500 rounded-2xl">
+                        <i class="fa-solid fa-temperature-half text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Suhu</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-SUHU" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">°C</span>
+                </div>
+            </div>
+
+            <!-- Kelembapan -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-cyan-50 text-cyan-500 rounded-2xl">
+                        <i class="fa-solid fa-droplet text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">Kelembapan</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-KELEMBAPAN" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">%</span>
+                </div>
+            </div>
+
+            <!-- CO2 -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-emerald-50 text-emerald-500 rounded-2xl">
+                        <i class="fa-solid fa-wind text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">CO2</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-CO2" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">ppm</span>
+                </div>
+            </div>
+
+            <!-- TVOC -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-purple-50 text-purple-500 rounded-2xl">
+                        <i class="fa-solid fa-vial text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">TVOC</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-TVOC" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">ppb</span>
+                </div>
+            </div>
+
+            <!-- NH3 (Ammonia) - Khas Toilet -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm lg:col-span-2">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-orange-50 text-orange-500 rounded-2xl">
+                            <i class="fa-solid fa-mask text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">NH3 (Ammonia)</h3>
+                            <p class="text-xs text-slate-400">Indikator Bau Pesing</p>
+                        </div>
+                    </div>
+                    <div id="badge-NH3" class="hidden px-3 py-1 rounded-full text-xs font-bold uppercase">Safe</div>
+                </div>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-NH3" class="text-5xl font-bold text-slate-800">--</span>
+                    <span class="text-xl text-slate-400">ppm</span>
+                </div>
+            </div>
+
+            <!-- H2S -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-rose-50 text-rose-500 rounded-2xl">
+                        <i class="fa-solid fa-skull-crossbones text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">H2S</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-H2S" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">ppm</span>
+                </div>
+            </div>
+
+            <!-- PM2.5 -->
+            <div class="glass-card p-6 rounded-3xl shadow-sm">
+                <div class="flex justify-between items-start mb-4">
+                    <div class="p-3 bg-slate-100 text-slate-600 rounded-2xl">
+                        <i class="fa-solid fa-smog text-xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-slate-500 text-sm font-medium uppercase tracking-wider">PM2.5</h3>
+                <div class="flex items-baseline gap-1 mt-2">
+                    <span id="val-PM25" class="text-4xl font-bold text-slate-800">--</span>
+                    <span class="text-lg text-slate-400">µg/m³</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Info Section -->
+        <footer class="mt-12 text-center text-slate-400 text-sm">
+            <p>&copy; 2026 Facility Management System • Update otomatis setiap 120 detik</p>
+        </footer>
+    </div>
+
+    <script>
+        // MASUKKAN API URL ANDA DI SINI
+        const API_URL = 'https://fitormdn.pythonanywhere.com/get?device=LANTAI-1';
+        const UPDATE_INTERVAL = 2 * 60 * 1000; // 2 Menit dalam milidetik
+
+        async function fetchData() {
+            const indicator = document.getElementById('status-indicator');
+            const statusText = document.getElementById('status-text');
+            
+            indicator.className = 'status-dot bg-amber-400 animate-pulse';
+            statusText.innerText = 'Memperbarui...';
+
+            try {
+                // Mencoba mengambil data
+                const response = await fetch(API_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                console.log("Data diterima:", data); // Lihat di F12 Console VS Code
+                
+                updateUI(data);
+
+                indicator.className = 'status-dot bg-emerald-500';
+                statusText.innerText = 'Terhubung';
+                document.getElementById('last-updated').innerText = `Data terakhir: ${data.created_at || new Date().toLocaleString()}`;
+                
+            } catch (error) {
+                console.error('Gagal mengambil data API:', error);
+                indicator.className = 'status-dot bg-rose-500';
+                statusText.innerText = 'Error: Cek Konsol';
+                
+                // Jika error CORS, berikan info di layar
+                if (error.message.includes('Failed to fetch')) {
+                    document.getElementById('last-updated').innerText = "Gagal: Masalah CORS atau koneksi API.";
+                }
+            }
+        }
+
+        function updateUI(data) {
+            // Mapping ID element ke key JSON yang ada di API Anda
+            const mappings = {
+                'val-CO2': data.CO2,
+                'val-H2S': data.H2S,
+                'val-KELEMBAPAN': data.KELEMBAPAN,
+                'val-NH3': data.NH3,
+                'val-PM25': data.PM25,
+                'val-SUHU': data.SUHU,
+                'val-TVOC': data.TVOC
+            };
+
+            for (const [id, value] of Object.entries(mappings)) {
+                const el = document.getElementById(id);
+                if (el) {
+                    // Pastikan nilai adalah angka atau string yang valid
+                    el.innerText = (value !== undefined && value !== null) ? value : '--';
+                }
+            }
+
+            // Logika indikator Ammonia (NH3)
+            const nh3Badge = document.getElementById('badge-NH3');
+            if (data.NH3 !== undefined && data.NH3 !== null) {
+                nh3Badge.classList.remove('hidden');
+                const valNH3 = parseFloat(data.NH3);
+                if (valNH3 > 10) {
+                    nh3Badge.innerText = 'Bau Terdeteksi';
+                    nh3Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
+                } else {
+                    nh3Badge.innerText = 'Normal';
+                    nh3Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
+                }
+            }
+        }
+
+        // Jalankan saat load pertama kali
+        fetchData();
+
+        // Set interval untuk update setiap 2 menit
+        setInterval(fetchData, UPDATE_INTERVAL);
+    </script>
+</body>
+</html>
