@@ -181,41 +181,40 @@
     <script>
         // MASUKKAN API URL ANDA DI SINI
         const API_URL = 'https://fitormdn.pythonanywhere.com/get?device=LANTAI-1';
-        const UPDATE_INTERVAL = 2 * 60 * 1000; // 2 Menit dalam milidetik
+        const UPDATE_INTERVAL = 1 * 60 * 1000; // 2 Menit dalam milidetik
 
         async function fetchData() {
             const indicator = document.getElementById('status-indicator');
             const statusText = document.getElementById('status-text');
-            
+
             indicator.className = 'status-dot bg-amber-400 animate-pulse';
             statusText.innerText = 'Memperbarui...';
 
             try {
-                // Mencoba mengambil data
                 const response = await fetch(API_URL);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+                let data = await response.json();
+                console.log("Raw data:", data);
+
+                if (Array.isArray(data)) {
+                    data.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+                    data = data[0];
                 }
-                
-                const data = await response.json();
-                console.log("Data diterima:", data); // Lihat di F12 Console VS Code
-                
+
+                console.log("Latest data:", data);
                 updateUI(data);
 
                 indicator.className = 'status-dot bg-emerald-500';
                 statusText.innerText = 'Terhubung';
-                document.getElementById('last-updated').innerText = `Data terakhir: ${data.created_at || new Date().toLocaleString()}`;
-                
+                document.getElementById('last-updated').innerText =
+                    `Data terakhir: ${data.created_at || new Date().toLocaleString()}`;
+
             } catch (error) {
                 console.error('Gagal mengambil data API:', error);
                 indicator.className = 'status-dot bg-rose-500';
-                statusText.innerText = 'Error: Cek Konsol';
-                
-                // Jika error CORS, berikan info di layar
-                if (error.message.includes('Failed to fetch')) {
-                    document.getElementById('last-updated').innerText = "Gagal: Masalah CORS atau koneksi API.";
-                }
+                statusText.innerText = 'Error API';
             }
         }
 
