@@ -345,11 +345,11 @@
             if (data.NH3 != null) {
                 nh3Badge.classList.remove('hidden');
                 const valNH3 = parseFloat(data.NH3);
-                if (valNH3 > 1.5) {
-                    nh3Badge.innerText = 'Bau Terdeteksi';
+                if (valNH3 > 0.7) {
+                    nh3Badge.innerText = 'Tidak Sehat';
                     nh3Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    nh3Badge.innerText = 'Normal';
+                    nh3Badge.innerText = 'Sehat';
                     nh3Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -359,10 +359,10 @@
                 suhuBadge.classList.remove('hidden');
                 const valSUHU = parseFloat(data.SUHU);
                 if (valSUHU > 26) {
-                    suhuBadge.innerText = 'Panas';
+                    suhuBadge.innerText = 'Tidak Nyaman';
                     suhuBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    suhuBadge.innerText = 'Normal';
+                    suhuBadge.innerText = 'Nyaman';
                     suhuBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -372,10 +372,10 @@
                 kelembapanBadge.classList.remove('hidden');
                 const valKELEMBAPAN = parseFloat(data.KELEMBAPAN);
                 if (valKELEMBAPAN > 80) {
-                    kelembapanBadge.innerText = 'Lembab';
+                    kelembapanBadge.innerText = 'Tidak Nyaman';
                     kelembapanBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    kelembapanBadge.innerText = 'Normal';
+                    kelembapanBadge.innerText = 'Nyaman';
                     kelembapanBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -385,10 +385,10 @@
                 co2Badge.classList.remove('hidden');
                 const valCO2 = parseFloat(data.CO2);
                 if (valCO2 > 1000) {
-                    co2Badge.innerText = 'Bahaya';
+                    co2Badge.innerText = 'Tidak Sehat';
                     co2Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    co2Badge.innerText = 'Normal';
+                    co2Badge.innerText = 'Tidak Sehat';
                     co2Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -398,10 +398,10 @@
                 tvocBadge.classList.remove('hidden');
                 const valTVOC = parseFloat(data.TVOC);
                 if (valTVOC > 3) {
-                    tvocBadge.innerText = 'Bahaya';
+                    tvocBadge.innerText = 'Tidak Sehat';
                     tvocBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    tvocBadge.innerText = 'Normal';
+                    tvocBadge.innerText = 'Sehat';
                     tvocBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -410,11 +410,11 @@
             if (data.H2S != null) {
                 h2sBadge.classList.remove('hidden');
                 const valH2S = parseFloat(data.H2S);
-                if (valH2S > 1) {
-                    h2sBadge.innerText = 'Bahaya';
+                if (valH2S > 0.33) {
+                    h2sBadge.innerText = 'Tidak Sehat';
                     h2sBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    h2sBadge.innerText = 'Normal';
+                    h2sBadge.innerText = 'Sehat';
                     h2sBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -424,10 +424,10 @@
                 pm25Badge.classList.remove('hidden');
                 const valPM25 = parseFloat(data.PM25);
                 if (valPM25 > 25) {
-                    pm25Badge.innerText = 'Bahaya';
+                    pm25Badge.innerText = 'Tidak Sehat';
                     pm25Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    pm25Badge.innerText = 'Normal';
+                    pm25Badge.innerText = 'Sehat';
                     pm25Badge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
@@ -440,7 +440,7 @@
                     fanBadge.innerText = 'Tinggi';
                     fanBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-rose-100 text-rose-600';
                 } else {
-                    fanBadge.innerText = 'Normal';
+                    fanBadge.innerText = 'Rendah';
                     fanBadge.className = 'px-3 py-1 rounded-full text-[10px] font-bold uppercase bg-emerald-100 text-emerald-600';
                 }
             }
